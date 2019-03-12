@@ -20,19 +20,41 @@ train_data.head()
 train_data.shape
 train_data.memory_usage()
 train_data.columns
+
 train_data.groupby(by = 'target').count()
+
 train_data.describe()
+
 kur = sc.kurtosis(x_train)
 pd.DataFrame(kur).describe()
+
 skew = sc.skew(x_train) 
 pd.DataFrame(skew).describe()
+
 for i in range(200): 
 	plt.subplot(40, 5, i + 1) 
 	x_train.iloc[:,i].plot(kind = 'density') 
+
 AndersonDarling = [] 
 for i in range(200): 
 	AndersonDarling.append(sc.anderson(x_train.iloc[:,i]).statistic)
 pd.DataFrame(AndersonDarling).describe()
+
+corr = x_train.corr()
+corr
+plt.matshow(corr)
+plt.title('Correlation matrix for Santander data')
+plt.show()
+
+PointBiserial = []
+for i in range(200): 
+	R = sc.pointbiserialr(y_train, x_train.iloc[:,i]) 
+	PointBiserial.append([R.correlation, R.pvalue])
+PointBiserial = pd.DataFrame(PointBiserial)
+PointBiserial.columns = ['correlation','pvalue']
+PointBiserial.sort_values('correlation')
+Significant = PointBiserial[np.abs(PointBiserial.correlation) > 0.05]
+Significant.shape
 
 # Standarize data
 mean = x_train.mean(axis = 0)
@@ -60,12 +82,17 @@ Assessment(SimplestApproachPrediction)
 RandomApproachPrediction =np.round(np.random.rand(y_val.shape[0]))
 Assessment(RandomApproachPrediction)
 
-
 # Logistic model - predict using logistic model without any penalization
 LogisticModel = linear_model.LogisticRegression(C = 1e42, penalty='l2', solver = 'saga', max_iter = 1000, multi_class='ovr')
 LogisticModel.fit(x_train, y_train)
 LogisticModelPrediction = LogisticModel.predict(x_val)
 Assessment(LogisticModelPrediction)
+
+# Logistic model estimated only on Significant variables
+Logit = linear_model.LogisticRegression(C = 1e42, penalty='l2', solver = 'saga', max_iter = 1000, multi_class='ovr')
+Logit.fit(x_train.iloc[:,Significant.index.values], y_train)
+LogitPrediction = Logit.predict(x_val.iloc[:,Significant.index.values])
+Assessment(LogitPrediction)
 
 # Lasso logistic model - predict using the logistic model with L1 penalization with alpha selected using cross-validation
 LassoLogisticModel = linear_model.LogisticRegressionCV(Cs = 100, cv = 5, penalty = 'l1', solver = 'saga', max_iter = 1000, 
