@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 # Read data
 data_dir = '/home/grzegorz/Kaggle/Santander'
 train_data = pd.read_csv(os.path.join(data_dir, 'train.csv'))
+test_data = pd.read_csv(os.path.join(data_dir, 'test.csv'))
 
 # Split data into targets and predictors
 y_train = train_data['target']
@@ -57,9 +58,10 @@ Significant = PointBiserial[np.abs(PointBiserial.correlation) > 0.05]
 Significant.shape
 
 # Standarize data
-mean = x_train.mean(axis = 0)
-std = x_train.std(axis = 0)
-x_train = (x_train - mean)/std
+	mean = x_train.mean(axis = 0)
+	std = x_train.std(axis = 0)
+	x_train = (x_train - mean)/std
+test_data.iloc[:,1:201]  = (test_data.iloc[:,1:201]  - mean)/std
 
 # Split data into training and testing set
 train_x_data = x_train
@@ -154,7 +156,7 @@ model.add(layers.Dense(1, activation = 'sigmoid'))
 callbacks_list=[callbacks.EarlyStopping(monitor='acc',patience=2,)]                                                                                   
 model.compile(optimizer='rmsprop', loss = 'binary_crossentropy', metrics = ['accuracy']) 
 model.summary()
-history = model.fit(x_train, y_train, epochs=10, batch_size=64, validation_data=(x_val, y_val), callbacks=callbacks_list)
+history = model.fit(x_train, y_train, epochs=10, batch_size=128, validation_data=(x_val, y_val), callbacks=callbacks_list)
 NNPrediction = model.predict(x_val)
 Assessment(NNPrediction)
 Accuracy(history)
@@ -162,12 +164,39 @@ Accuracy(history)
 # Well-balanced NN
 callbacks_list=[callbacks.EarlyStopping(monitor='acc',patience=2,)]
 model = models.Sequential()   
-model.add(layers.Dense(1024, kernel_regularizer = regularizers.l1(0.001), activation='relu', input_shape = (200,)))
+model.add(layers.Dense(512, kernel_regularizer = regularizers.l1(0.001), activation='relu', input_shape = (200,)))
 model.add(layers.BatchNormalization(axis = 1)) 
 model.add(layers.Dense(1, activation = 'sigmoid')) 
 model.compile(optimizer='rmsprop', loss = 'binary_crossentropy', metrics = ['accuracy'])   
 model.summary()  
-history = model.fit(x_train, y_train, epochs=10, batch_size=64, callbacks=callbacks_list)  
+history = model.fit(x_train, y_train, epochs=10, batch_size=512, callbacks=callbacks_list)  
 NNPrediction = model.predict(x_val)  
 Assessment(NNPrediction)
+
+
+def SelectTreshold(model, x = x_train, y = y_train):
+	pred = model.predict(x)
+	fpr, tpr, thresholds = metrics.roc_curve(y, pred)
+	sens = tpr + (1 - fpr)
+	best_id = np.argmax(sens)
+	treshold = thresholds[best_id]
+	return(treshold)
+
+def MakePrediction(model, x = x_val, y = y_val, train_x = x_train, train_y = y_train):
+	threshold = SelectTreshold(model, train_x, train_y)
+	pred = model.predict(x_val)
+	pred = pred > threshold
+	pred = pred.astype('float32')
+	print(Assessment(pred, y_val))
+	return(pred)
+
+def TresholdAgain(pred, threshold):
+	pred = pred > threshold
+	pred = pred.astype('float32')
+	auc = Assessment(pred, y_val)
+	return(auc)
+
+
+	
+
 
