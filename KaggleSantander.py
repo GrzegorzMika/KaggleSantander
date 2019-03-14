@@ -101,14 +101,73 @@ LassoLogisticModel.fit(x_train, y_train)
 LassoLogisticModelPrediction = LassoLogisticModel.predict(x_val)
 Assessment(LassoLogisticModelPrediction)
 
+# Simplest Neural Network
+from keras import models
+from keras import layers
+from keras import regularizers                                                                                                       
+from keras import callbacks
+
+model = models.Sequential()
+model.add(layers.Dense(128, activation = 'relu', input_shape = (200,)))
+model.add(layers.Dense(1, activation = 'sigmoid'))
+model.compile(optimizer='rmsprop', loss = 'binary_crossentropy', metrics = ['accuracy'])
+history = model.fit(x_train, y_train, epochs=10, batch_size=64, validation_data=(x_val, y_val))
+NNPrediction = model.predict(x_val)
+Assessment(NNPrediction)
 
 
+def Loss(history): 
+	loss = history.history['loss'] 
+	val_loss = history.history['val_loss'] 
+	epochs = range(1, len(loss) + 1) 
+	plt.plot(epochs, loss, 'bo', label='Training loss') 
+	plt.plot(epochs, val_loss, 'b', label='Validation loss') 
+	plt.title('Training and validation loss') 
+	plt.xlabel('Epochs') 
+	plt.ylabel('Loss') 
+	plt.legend() 
+	plt.show() 
+                                                                                                                                   
 
+def Accuracy(history): 
+	acc = history.history['acc'] 
+	val_acc = history.history['val_acc']
+	epochs = range(1, len(acc) + 1) 
+	plt.plot(epochs, acc, 'bo', label='Training acc') 
+	plt.plot(epochs, val_acc, 'b', label='Validation acc') 
+	plt.title('Training and validation accuracy') 
+	plt.xlabel('Epochs') 
+	plt.ylabel('Loss') 
+	plt.legend() 
+	plt.show() 
 
+# Very complicated densly connected NN
+model = models.Sequential()                                                                                                          
+model.add(layers.Dense(1024, activation = 'relu', input_shape = (200,), kernel_regularizer=regularizers.l1(0.001)))                                                            
+model.add(layers.Dense(512, activation = 'relu', kernel_regularizer=regularizers.l1(0.001)))                                                                                     
+model.add(layers.Dense(256, activation = 'relu', kernel_regularizer=regularizers.l1(0.001))) 
+model.add(layers.Dense(128, activation = 'relu',kernel_regularizer=regularizers.l1(0.001)))                                                                             
+model.add(layers.Dense(64, activation = 'relu',kernel_regularizer=regularizers.l1(0.001))) 
+model.add(layers.Dense(32, activation = 'relu',kernel_regularizer=regularizers.l1(0.001)))                                                                          
+model.add(layers.Dense(16, activation = 'relu', kernel_regularizer=regularizers.l1(0.001)))                                                                                    
+model.add(layers.Dense(1, activation = 'sigmoid'))
+callbacks_list=[callbacks.EarlyStopping(monitor='acc',patience=2,)]                                                                                   
+model.compile(optimizer='rmsprop', loss = 'binary_crossentropy', metrics = ['accuracy']) 
+model.summary()
+history = model.fit(x_train, y_train, epochs=10, batch_size=64, validation_data=(x_val, y_val), callbacks=callbacks_list)
+NNPrediction = model.predict(x_val)
+Assessment(NNPrediction)
+Accuracy(history)
 
-
-
-
-
-
+# Well-balanced NN
+callbacks_list=[callbacks.EarlyStopping(monitor='acc',patience=2,)]
+model = models.Sequential()   
+model.add(layers.Dense(1028, kernel_regularizer = regularizers.l1(0.001), activation='relu', input_shape = (200,)))
+model.add(layers.BatchNormalization(axis = 1)) 
+model.add(layers.Dense(1, activation = 'sigmoid')) 
+model.compile(optimizer='rmsprop', loss = 'binary_crossentropy', metrics = ['accuracy'])   
+model.summary()  
+history = model.fit(x_train, y_train, epochs=10, batch_size=64, callbacks=callbacks_list)  
+NNPrediction = model.predict(x_val)  
+Assessment(NNPrediction)
 
