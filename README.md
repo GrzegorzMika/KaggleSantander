@@ -8,4 +8,4 @@ Results:
 
 12 March 2019 - 0.63 - Logistic Regression with L1 penalty
 
-14 March 2019 - 0.85 - Densly Connected NN
+14 March 2019 - 0.86 - Densly Connected NN
