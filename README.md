@@ -6,3 +6,4 @@ Link to competition: www.kaggle.com/c/santander-customer-transaction-prediction
 
 Results:
 12 March 2019 - 0.63 - Logistic Regression with L1 penalty
+14 March 2019 - 0.85 - Densly Connected NN
