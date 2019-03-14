@@ -162,7 +162,7 @@ Accuracy(history)
 # Well-balanced NN
 callbacks_list=[callbacks.EarlyStopping(monitor='acc',patience=2,)]
 model = models.Sequential()   
-model.add(layers.Dense(1028, kernel_regularizer = regularizers.l1(0.001), activation='relu', input_shape = (200,)))
+model.add(layers.Dense(1024, kernel_regularizer = regularizers.l1(0.001), activation='relu', input_shape = (200,)))
 model.add(layers.BatchNormalization(axis = 1)) 
 model.add(layers.Dense(1, activation = 'sigmoid')) 
 model.compile(optimizer='rmsprop', loss = 'binary_crossentropy', metrics = ['accuracy'])   
