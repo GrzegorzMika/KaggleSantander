@@ -9,3 +9,5 @@ Results:
 12 March 2019 - 0.63 - Logistic Regression with L1 penalty
 
 14 March 2019 - 0.86 - Densly Connected NN
+
+15 march 2019 - 0.91 - XGBoost
