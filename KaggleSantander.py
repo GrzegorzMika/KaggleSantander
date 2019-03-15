@@ -58,9 +58,9 @@ Significant = PointBiserial[np.abs(PointBiserial.correlation) > 0.05]
 Significant.shape
 
 # Standarize data
-	mean = x_train.mean(axis = 0)
-	std = x_train.std(axis = 0)
-	x_train = (x_train - mean)/std
+mean = x_train.mean(axis = 0)
+std = x_train.std(axis = 0)
+x_train = (x_train - mean)/std
 test_data.iloc[:,1:201]  = (test_data.iloc[:,1:201]  - mean)/std
 
 # Split data into training and testing set
@@ -196,7 +196,11 @@ def TresholdAgain(pred, threshold):
 	auc = Assessment(pred, y_val)
 	return(auc)
 
-
-	
+# XGBoost
+import xgboost as xgb
+param = {'objective': 'binary:logistic', 'eval_metric':'auc', 'booster':'gbtree', 'verbosity':2, 'nthread':12, 'eta':0.3, 'gamma':31, 'max_depth':5, 'lambda':0.9, 'alpha':0.2, 'tree_method':'exact' }
+data_xgb = xgb.DMatrix(data=train_x_data, label=train_y_data)
+num_round = 200
+model = xgb.train(param, data_xgb, num_round)
 
 
