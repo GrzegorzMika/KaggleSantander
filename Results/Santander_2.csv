@@ -1,0 +1,6 @@
+round_epochs,val_loss,val_acc,loss,acc,lr,first_neuron_dim,first_neuron_act,first_dropout,second_neuron_dim,second_neuron_act,second_dropout,third_neuron_dim,third_neuron_act,third_dropout,l1_regularization_1,l1_regularization_2,l1_regularization_3,optimizer,batch_size,epochs
+7,12.810829370117187,0.89815,12.906194953155518,0.89985,0.001,256,relu,0.2,16,relu,0,512,relu,0.8,1,10,1,adam,128,50
+7,0.33717448921203613,0.89815,0.33393165868520736,0.89985,0.000100000005,128,relu,0.8,32,relu,0.5,128,linear,0,0.01,0.1,0,adam,128,50
+7,126.00025222167969,0.89815,127.0811893005371,0.89985,0.001,512,relu,0.2,16,relu,0,64,linear,0.5,10,0.1,0.0001,adam,128,50
+7,0.3355848439216614,0.89815,0.332300211083889,0.89985,0.000100000005,32,relu,0.5,16,linear,0.2,32,relu,0.8,0,0.1,1,adam,128,50
+7,0.4363766903877258,0.89815,0.43296940593719485,0.89985,0.001,16,relu,0.5,512,relu,0.8,128,relu,0,0.0001,0.1,0.001,adam,1024,50
